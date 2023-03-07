@@ -1,0 +1,98 @@
+{
+    "database": {
+        "user": "arb_user",
+        "password": "supersecure",
+        "database": "arb_db",
+        "url": "localhost",
+        "port": 5432
+    },
+    "chains": [
+        {
+            "id": 1,
+            "name": "ethereum-mainnet",
+            "rpc_url": ""
+        },
+        {
+            "id": 137,
+            "name": "polygon",
+            "rpc_url": ""
+        }
+    ],
+    "amounts": [
+        100,
+        500,
+        1000
+    ],
+    "filters": {
+        "tokens": {
+            "ticker": {
+                "op": "Or",
+                "filters": [
+                    // {
+                    //     "op": "in",
+                    //     "value": [
+                    //     ]
+                    // }
+                    // {
+                    //     "op": "In",
+                    //     "value": [
+                    //         "USDC", "DAI", "MATIC", "ETH", "USDT", "BUSD", "SOL"
+                    //     ]
+                    // }
+                ]
+            }
+        }
+    },
+    "proxies": [
+        {
+            "url": "86.38.177.108:50100",
+            "user": "kabilov2011",
+            "password": "d2YNUm8fSp"
+        },
+        {
+            "url": "86.38.177.105:50100",
+            "user": "kabilov2011",
+            "password": "d2YNUm8fSp"
+        },
+        {
+            "url": "45.140.211.37:50100",
+            "user": "kabilov2011",
+            "password": "d2YNUm8fSp"
+        },
+        {
+            "url": "86.38.177.226:50100",
+            "user": "kabilov2011",
+            "password": "d2YNUm8fSp"
+        },
+        {
+            "url": "86.38.177.124:50100",
+            "user": "kabilov2011",
+            "password": "d2YNUm8fSp"
+        },
+        {
+            "url": "86.38.177.236:50100",
+            "user": "kabilov2011",
+            "password": "d2YNUm8fSp"
+        },
+        {
+            "url": "86.38.177.192:50100",
+            "user": "kabilov2011",
+            "password": "d2YNUm8fSp"
+        },
+        {
+            "url": "86.38.177.115:50100",
+            "user": "kabilov2011",
+            "password": "d2YNUm8fSp"
+        },
+        {
+            "url": "178.218.130.215:50100",
+            "user": "kabilov2011",
+            "password": "d2YNUm8fSp"
+        },
+        {
+            "url": "86.38.177.156:50100",
+            "user": "kabilov2011",
+            "password": "d2YNUm8fSp"
+        }
+    ]
+}
