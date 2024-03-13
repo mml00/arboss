@@ -15,13 +15,14 @@ pub async fn get_tokens<'a, 'b>(db: &'b mut Rbatis, chains: &'a Vec<Chain>) -> R
 
     for stored_token in stored_tokens.iter() {
         tokens.insert(Token {
+            db_id: Some(stored_token.id.unwrap()),
             ticker: stored_token.ticker.clone(),
             chain: chains.iter().find(|c| c.name == stored_token.chain.clone()).unwrap(),
             decimals: stored_token.decimals.clone(),
             name: stored_token.name.clone(),
             address: stored_token.address.clone(),
             price_usd: match &stored_token.price_usd {
-                Some(p) => Some(format!("{p}")),
+                Some(p) => Some(p.0.clone()),
                 None => None,
             },
             volume_24h_usd: match &stored_token.volume_24h_usd {

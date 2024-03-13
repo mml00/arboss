@@ -19,6 +19,7 @@ use crate::{
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Token<'a> {
+    pub db_id: Option<u64>,
     pub ticker: String,
     pub chain: &'a Chain,
     pub decimals: Option<u8>,

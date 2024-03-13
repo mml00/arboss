@@ -30,7 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let tokens = get_tokens(&mut db, &chains).await?;
     println!("Tokens: {:?}", tokens.len());
 
-    let possible_pairs_enumerations = get_possible_pairs_enumerations(&tokens, false);
+    let possible_pairs_enumerations = get_possible_pairs_enumerations(&tokens, config.crosschain);
     println!("Possible pairs found: {}", &possible_pairs_enumerations.len());
 
     // providers
@@ -38,10 +38,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let oneinch = providers::OneInchProvider::new(config.proxies.clone());
     providers.insert("1Inch", &oneinch);
 
-    let valid_pairs = validate_pairs(&possible_pairs_enumerations, &providers).await?;
-    println!("Valid pairs found: {}", &valid_pairs.len());
+    use std::time::{SystemTime};
+    loop {
+        let start = SystemTime::now();
+        // possible_pairs_enumerations.sort_by_key(|p| (p.0.ticker.clone(), p.1.ticker.clone()));
+        // let p = possible_pairs_enumerations[0..500].to_vec();
+        // let valid_pairs = validate_pairs(&p, &providers, crosschain).await?;
+        let valid_pairs = validate_pairs(&possible_pairs_enumerations, &providers, crosschain).await?;
+        println!("Valid pairs found: {} ({}s)", &valid_pairs.len(), SystemTime::now().duration_since(start).unwrap_or_default().as_secs());
 
-    update_pairs(&mut db, &valid_pairs).await?;
+        update_pairs(&mut db, &valid_pairs).await?;
+    }
 
-    Ok(())
+    // Ok(())
 }

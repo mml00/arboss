@@ -68,6 +68,7 @@ pub struct CDatabase {
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
+    pub crosschain: bool,
     pub database: CDatabase,
     pub chains: Vec<CChain>,
     pub filters: CFilters,

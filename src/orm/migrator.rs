@@ -28,7 +28,7 @@ pub async fn migrate_token_table(db: &Rbatis) -> Result<(), Box<dyn std::error::
             ALTER COLUMN last_updated_at SET DATA TYPE timestamp with time zone,
             ALTER COLUMN is_active SET DATA TYPE boolean
     ", vec![]).await?;
-    db.query_decode("UPDATE token SET is_active = FALSE", vec![]).await?;
+    // db.query_decode("UPDATE token SET is_active = FALSE", vec![]).await?;
     // db.query_decode("UPDATE token SET last_updated_at = CURRENT_TIMESTAMP", vec![]).await?;
     db.query_decode("ALTER TABLE token
             ALTER COLUMN ticker SET NOT NULL,

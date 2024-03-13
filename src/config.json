@@ -1,9 +1,10 @@
 {
+    "crosschain": true,
     "database": {
         "user": "arb_user",
         "password": "supersecure",
         "database": "arb_db",
-        "url": "localhost",
+        "url": "127.0.0.1",
         "port": 5432
     },
     "chains": [
@@ -26,19 +27,14 @@
     "filters": {
         "tokens": {
             "ticker": {
-                "op": "Or",
+                "op": "Not",
                 "filters": [
-                    // {
-                    //     "op": "in",
-                    //     "value": [
-                    //     ]
-                    // }
-                    // {
-                    //     "op": "In",
-                    //     "value": [
-                    //         "USDC", "DAI", "MATIC", "ETH", "USDT", "BUSD", "SOL"
-                    //     ]
-                    // }
+                    {
+                        "op": "In",
+                        "value": [
+                            // "USDC", "DAI", "MATIC", "ETH", "USDT", "BUSD", "SOL"
+                        ]
+                    }
                 ]
             }
         }

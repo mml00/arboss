@@ -4,6 +4,8 @@ use std::collections::HashMap;
 use crate::{
     Chain,
     Token,
+    Pair,
+    Swap,
     utils::filters::Filter,
     market_data::{
         MarketDataProvider,
@@ -30,9 +32,15 @@ pub trait ExchangeProvider<'a>: Debug + Sync {
 
     async fn check_pairs_availability(
         &'a self,
-        token_pairs: &'a Vec<TSimplePair>
+        token_pairs: &'a Vec<TSimplePair>,
+        // cross_chain: bool,
     ) -> Result<Vec<TSimplePair>, Box<dyn std::error::Error>>;
 
+    async fn get_swap(
+        &'a self,
+        pair: &'a Pair<'a>,
+        from_token_amount: u128,
+    ) -> Result<Option<Swap<'a>>, Box<dyn std::error::Error>>;
     // async fn get_quotes(
     //     &'a self,
     //     pairs: &'a Vec<&'a Pair<'a>>

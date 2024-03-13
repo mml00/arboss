@@ -1,5 +1,6 @@
 use web3::types::Address;
 use rand::{
+    random,
     seq::SliceRandom,
     thread_rng
 };
@@ -13,10 +14,13 @@ use std::io::{
 };
 
 use crate::{
+    Pair,
+    Swap,
     Token,
     Chain,
     utils::filters::Filter,
     exchange::{
+        TExchangeProvider,
         ExchangeProvider,
         TSimplePair,
     },
@@ -56,15 +60,15 @@ struct OIRTokens {
     tokens: HashMap<String, OIRToken>,
 }
 
-// #[derive(Debug, Deserialize)]
-// #[allow(non_snake_case)]
-// struct OIRQuote {
-//     fromToken: OIRToken,
-//     toToken: OIRToken,
-//     fromTokenAmount: String,
-//     toTokenAmount: String,
-//     // estimatedGas: String,
-// }
+#[derive(Debug, Deserialize)]
+#[allow(non_snake_case)]
+struct OIRQuote {
+    fromToken: OIRToken,
+    toToken: OIRToken,
+    fromTokenAmount: String,
+    toTokenAmount: String,
+    // estimatedGas: String,
+}
 
 
 #[derive(Debug)]
@@ -109,7 +113,7 @@ impl<'a> ExchangeProvider<'a> for OneInchProvider {
             )
         }
 
-        for _ in 1..40 {
+        for _ in 1..20 {
             let pair = pairs_iter.next();
             requests_queue.push(get_quote(pair.unwrap(), clients.choose(&mut thread_rng()).unwrap()));
         }
@@ -200,6 +204,43 @@ impl<'a> ExchangeProvider<'a> for OneInchProvider {
 
         Ok(result_tokens)
     }
+
+    async fn get_swap(
+        &'a self,
+        pair: &'a Pair<'a>,
+        from_token_amount: u128,
+    ) -> Result<Option<Swap<'a>>, Box<dyn std::error::Error>> {
+        let proxy = self.proxy_configs[(random::<f32>() * self.proxy_configs.len() as f32).floor() as usize].clone();
+        let client = Client::builder().proxy(
+            Proxy::https(&proxy.url)
+                .unwrap()
+                .basic_auth(&proxy.user, &proxy.password)
+        ).build().unwrap();
+        let quote_response = client.get(format!("https://api.1inch.exchange/v5.0/{}/quote", pair.from.chain.id))
+            .query(&[
+                ("fromTokenAddress", &format!("{:#x}", pair.from.address.unwrap())),
+                ("toTokenAddress", &format!("{:#x}", pair.to.address.unwrap())),
+                (
+                    "amount",
+                    &from_token_amount.to_string()
+                )
+            ]).send().await;
+
+        if let Ok(response) = quote_response {
+            if response.status().is_success() {
+                if let Ok(data) = response.json::<OIRQuote>().await {
+                    return Ok(Some(Swap {
+                        pair: pair,
+                        amount: from_token_amount,
+                        price: data.toTokenAmount,
+                        provider: self as TExchangeProvider,
+                    }));
+                }
+                // println!("Success");
+            }
+        }
+        return Ok(None)
+    }
 }
 
 async fn process_token<'a, 'b>(
@@ -219,6 +260,7 @@ async fn process_token<'a, 'b>(
         None => None
     };
     let token_candidate = Token {
+        db_id: None,
         ticker: match &market_data {
             Some(data) => data.ticker.clone().to_uppercase(),
             None => token.symbol.clone(),

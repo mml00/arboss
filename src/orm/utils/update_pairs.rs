@@ -20,6 +20,7 @@ pub async fn update_pairs<'a>(db: &'a mut Rbatis, pairs: &'a Vec<Pair<'a>>) -> R
         } else {continue};
 
         let stored_pair_candidates = PairModel::select_pair(db, "pair", from_token.id.unwrap(), to_token.id.unwrap()).await?;
+        // println!("{stored_pair_candidates:?}: {} -> {}", from_token.id.unwrap(), to_token.id.unwrap());
         let mut updatable_pair = PairModel {
             id: None,
             from_token_id: from_token.id.unwrap(),
